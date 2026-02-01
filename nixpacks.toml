@@ -1,0 +1,16 @@
+[phases.setup]
+nixPkgs = [
+  "sqlite",
+  "nodejs-18_x"
+]
+
+[phases.build]
+cmds = [
+  "npm ci --only=production"
+]
+
+[start]
+cmd = "node server.js"
+
+[environment]
+PORT = "3000"
