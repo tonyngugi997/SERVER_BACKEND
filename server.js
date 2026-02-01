@@ -24,15 +24,21 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 // Email client setup
-let emailEnabled = false;
-let resendClient;
+// CORS configuration for Railway
+app.use(cors({
+  origin: ['*', 'https://healthcheck.railway.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'User-Agent', 'X-Requested-With'],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
 
-if (process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL) {
-  try {
-    resendClient = new Resend(process.env.RESEND_API_KEY);
-    emailEnabled = true;
-    console.log('✅ Resend email client configured');
-  } catch (error) {
+// Add request logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} ${req.method} ${req.url} from ${req.headers['host'] || req.ip}`);
+  next();
+});
     console.log('❌ Resend configuration error:', error.message);
     console.log('📧 Using console-only mode');
   }
@@ -111,12 +117,22 @@ const User = sequelize.define('User', {
   // Removed problematic columns for now
 });
 
-// Appointment Model
-const Appointment = sequelize.define('Appointment', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+    // Health check endpoint for Railway
+    app.get('/api/health', (req, res) => {
+      console.log('🔍 Health check called from:', req.headers['host'] || req.headers['x-forwarded-host']);
+      res.json({
+        success: true,
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        service: 'SmarTQue Backend',
+        environment: process.env.NODE_ENV || 'development'
+      });
+    });
+    
+    // HEAD method for health checks
+    app.head('/api/health', (req, res) => {
+      res.status(200).end();
+    });
   },
   userId: {
     type: DataTypes.INTEGER,
