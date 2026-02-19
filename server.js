@@ -114,7 +114,6 @@ const User = sequelize.define('User', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  // Removed problematic columns for now
 });
 
     // Health check endpoint for Railway
@@ -251,7 +250,7 @@ async function startServer() {
     await sequelize.authenticate();
     console.log('✅ SQLite database connected');
     
-    // Sync database - DROP AND RECREATE to fix schema
+    // Sync database
     console.log('🔄 Syncing database tables...');
     await sequelize.sync({alter: true});
     console.log('✅ Database tables created');
@@ -336,7 +335,7 @@ async function startServer() {
           success: true,
           message: 'Verification code sent to your email',
           expiresIn: 600, // 10 minutes in seconds
-          otp: otp, // For development only
+          otp: otp, //for dev only
         });
         
       } catch (error) {
@@ -579,7 +578,7 @@ async function startServer() {
         const user = await User.findOne({ where: { email } });
         
         if (!user) {
-          // Don't reveal user existence for security
+        
           console.log('📧 Reset request for non-existent email:', email);
           return res.json({
             success: true,
@@ -675,7 +674,6 @@ async function startServer() {
       }
     });
 
-    // ==================== APPOINTMENT ENDPOINTS ====================
     
     // Book appointment
     app.post('/api/appointments/book', async (req, res) => {
