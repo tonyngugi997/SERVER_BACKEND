@@ -86,7 +86,7 @@ const OTP = sequelize.define('OTP', {
   },
 });
 
-// User Model - SIMPLIFIED VERSION
+// User Model
 const User = sequelize.define('User', {
   id: {
     type: DataTypes.INTEGER,
@@ -167,7 +167,7 @@ const User = sequelize.define('User', {
   },
 });
 
-// Hash password before saving
+// Hash password 
 User.beforeCreate(async (user) => {
   if (user.password) {
     const salt = await bcrypt.genSalt(10);
