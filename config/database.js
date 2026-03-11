@@ -1,10 +1,9 @@
 const { Sequelize } = require('sequelize');
 
-// Create SQLite database (file-based)
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: './database.sqlite', // This creates a file
-  logging: false, // Set to console.log to see SQL queries
+  storage: './database.sqlite',
+  logging: false, 
 });
 
 // Test the connection
